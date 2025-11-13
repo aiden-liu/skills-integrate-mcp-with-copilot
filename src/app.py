@@ -111,7 +111,7 @@ def login(username: str, password: str, response: Response):
         value=session_id,
         httponly=True,
         max_age=86400,  # 24 hours
-        samesite="lax"
+        samesite="strict"
     )
     
     return {"message": "Login successful", "username": username}
