@@ -105,7 +105,7 @@ def root():
 @app.post("/auth/login")
 def login(username: str, password: str, response: Response):
     """Authenticate a teacher and create a session"""
-    if username not in teachers or teachers[username] != password:
+    if username not in teachers or not secrets.compare_digest(teachers.get(username, ""), password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Create session
