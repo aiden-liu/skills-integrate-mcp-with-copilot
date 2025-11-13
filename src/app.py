@@ -24,9 +24,16 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
 
 # Load teacher credentials
 teachers_file = current_dir / "teachers.json"
-with open(teachers_file, 'r') as f:
-    teachers_data = json.load(f)
-    teachers = {teacher["username"]: teacher["password"] for teacher in teachers_data["teachers"]}
+try:
+    with open(teachers_file, 'r') as f:
+        teachers_data = json.load(f)
+        teachers = {teacher["username"]: teacher["password"] for teacher in teachers_data["teachers"]}
+except FileNotFoundError:
+    raise RuntimeError(f"teachers.json file not found at {teachers_file}. Please ensure the file exists.")
+except json.JSONDecodeError as e:
+    raise RuntimeError(f"teachers.json is not valid JSON: {e}")
+except KeyError as e:
+    raise RuntimeError(f"teachers.json is missing expected key: {e}")
 
 # In-memory session storage (session_id -> username)
 sessions = {}
